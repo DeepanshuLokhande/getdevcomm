@@ -10,6 +10,7 @@ import CommunityDetail from './pages/CommunityDetail';
 import Profile from './pages/Profile';
 import MatchMaker from './pages/MatchMaker';
 import UploadCommunity from './pages/UploadCommunity';
+import OAuthCallback from './pages/OAuthCallback';
 
 function App() {
   useEffect(() => {
@@ -46,6 +47,7 @@ function App() {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/match" element={<MatchMaker />} />
                 <Route path="/upload-community" element={<UploadCommunity />} />
+                <Route path="/oauth/callback" element={<OAuthCallback />} />
               </Routes>
             </main>
             <Footer />

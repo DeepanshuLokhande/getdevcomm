@@ -66,6 +66,8 @@ npm run dev
 ### Auth
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - Login user
+- `GET /api/auth/google` - Google OAuth login
+- `GET /api/auth/google/callback` - Google OAuth callback
 - `GET /api/auth/me` - Get current user (protected)
 
 ### Communities

@@ -8,6 +8,11 @@ const LoginModal = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const { login, register } = useAuth();
 
+  const handleGoogleAuth = () => {
+    const base = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+    window.location.href = `${base}/auth/google`;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -112,6 +117,26 @@ const LoginModal = ({ onClose }) => {
             {loading ? 'Please wait...' : isLogin ? 'Login' : 'Sign Up'}
           </button>
         </form>
+
+        <div className="mt-4">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="h-px flex-1 bg-gray-200 dark:bg-dark-border" />
+            <span className="text-xs text-gray-500 dark:text-muted-dark">or</span>
+            <div className="h-px flex-1 bg-gray-200 dark:bg-dark-border" />
+          </div>
+          <button
+            onClick={handleGoogleAuth}
+            className="w-full py-2.5 border border-gray-300 dark:border-dark-border rounded-lg font-medium bg-white dark:bg-dark-bg text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-dark-card transition-colors flex items-center justify-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="w-5 h-5">
+              <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12 c0-6.627,5.373-12,12-12c3.059,0,5.842,1.153,7.961,3.039l5.657-5.657C35.173,6.053,29.818,4,24,4C12.955,4,4,12.955,4,24 s8.955,20,20,20s20-8.955,20-20C44,22.651,43.862,21.35,43.611,20.083z"/>
+              <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.125,16.241,18.671,14,24,14c3.059,0,5.842,1.153,7.961,3.039l5.657-5.657 C35.173,6.053,29.818,4,24,4C16.318,4,9.559,8.136,6.306,14.691z"/>
+              <path fill="#4CAF50" d="M24,44c5.717,0,10.936-2.189,14.87-5.76l-6.857-5.781C30.042,33.676,27.139,34.6,24,34.6 c-5.202,0-9.619-3.317-11.281-7.946l-6.6,5.087C8.241,39.864,15.513,44,24,44z"/>
+              <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.793,2.237-2.231,4.166-4.09,5.6c0.001-0.001,0.002-0.001,0.003-0.002 l6.857,5.781C37.835,39.207,44,34,44,24C44,22.651,43.862,21.35,43.611,20.083z"/>
+            </svg>
+            Continue with Google
+          </button>
+        </div>
 
         <div className="mt-4 text-center">
           <button

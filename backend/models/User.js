@@ -16,9 +16,11 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, 'Please provide a password'],
-    minlength: 6,
     select: false
+  },
+  googleId: {
+    type: String,
+    default: null
   },
   techStack: {
     type: [String],
@@ -45,9 +47,11 @@ const userSchema = new mongoose.Schema({
 
 // Hash password before saving
 userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, 12);
-  next();
+ if (this.password !== null) {
+   if (!this.isModified('password')) return next();
+   this.password = await bcrypt.hash(this.password, 12);
+   next();
+ }
 });
 
 // Compare password method

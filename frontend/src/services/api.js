@@ -39,6 +39,9 @@ export const authAPI = {
     method: 'POST',
     body: JSON.stringify(credentials),
   }),
+  googleOAuth: () => apiCall('/auth/google',{
+    method: 'GET',
+  }),
   getMe: () => apiCall('/auth/me'),
 };
 
