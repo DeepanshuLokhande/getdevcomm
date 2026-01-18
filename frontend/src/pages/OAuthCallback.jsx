@@ -7,18 +7,23 @@ const OAuthCallback = () => {
   const { setAuthToken } = useAuth();
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
+   const params = new URLSearchParams(window.location.search);
+   const token = params.get('token');
+  const error = params.get('error');
 
-    if (token) {
-      setAuthToken(token);
-      // After setting token, navigate to home (user will be loaded by AuthContext)
-      navigate('/', { replace: true });
-    } else {
-      // No token found; navigate to home
-      navigate('/', { replace: true });
-    }
-  }, [navigate, setAuthToken]);
+  // Clear sensitive params from URL/history
+  window.history.replaceState({}, '', window.location.pathname);
+
+  if (error) {
+    // Redirect with error state for user feedback
+    navigate('/', { replace: true, state: { authError: error } });
+  } else if (token) {
+     setAuthToken(token);
+     navigate('/', { replace: true });
+   } else {
+    navigate('/', { replace: true, state: { authError: 'Authentication failed' } });
+   }
+ }, [navigate, setAuthToken])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white dark:bg-dark-bg">

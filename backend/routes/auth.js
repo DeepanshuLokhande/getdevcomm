@@ -98,7 +98,7 @@ router.post(
 
       // Check if user exists and get password
       const user = await User.findOne({ email }).select("+password");
-      if (!user) {
+      if (!user || !user.password) {
         return res.status(401).json({
           success: false,
           message: "Invalid credentials",
@@ -167,17 +167,22 @@ router.get("/google", (req, res) => {
 
 router.get("/google/callback", async (req, res) => {
   const code = req.query.code;
+  if (!code) {
+    return res.status(400).json({ message: "Missing authorization token" });
+  }
   try {
     // Exchange authorization code for tokens
+    const params = new URLSearchParams({
+      code,
+      client_id: GOOGLE_CLIENT_ID,
+      client_secret: GOOGLE_CLIENT_SECRET,
+      redirect_uri: REDIRECT_URI,
+      grant_type: "authorization_code",
+    });
     const tokenResponse = await axios.post(
       "https://oauth2.googleapis.com/token",
-      {
-        code,
-        client_id: GOOGLE_CLIENT_ID,
-        client_secret: GOOGLE_CLIENT_SECRET,
-        redirect_uri: REDIRECT_URI,
-        grant_type: "authorization_code",
-      }
+      params,
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
     );
 
     const { access_token } = tokenResponse.data;
@@ -190,8 +195,10 @@ router.get("/google/callback", async (req, res) => {
       }
     );
 
-    const { email, name, id } = userInfoResponse.data;
-
+const { email, name, id, verified_email } = userInfoResponse.data;
+    if (!verified_email) {
+      return res.status(401).json({ message: "Google email not verified" });
+    }
     const existingUser = await User.findOne({ email });
     let userDoc;
     if (existingUser) {
@@ -212,8 +219,8 @@ router.get("/google/callback", async (req, res) => {
     const token = generateToken(userDoc._id);
 
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
-    const redirectTo = `${frontendUrl}/oauth/callback?token=${encodeURIComponent(token)}`;
-    return res.redirect(302, redirectTo);
+    res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'Lax' });
+    res.redirect(`${frontendUrl}/oauth/callback`);
   } catch (error) {
     console.error("Error during Google OAuth", error);
     return res.status(500).json({ message: "Internal server error" });
